@@ -53,7 +53,10 @@ exports.registerUser =[
       name,
       email,
       password: await bcrypt.hash(password, 10),
+      isVerified: false,
     });
+
+    await sendVerificationEmail(user);
 
     res.status(201).json({
       _id: user._id,
@@ -80,6 +83,10 @@ exports.loginUser = [
 
     const user = await User.findOne({ email });
     if (user && (await bcrypt.compare(password, user.password))) {
+      if (!user.isVerified) {
+        return res.status(401).json({ message: 'Please verify your email before logging in.' });
+      }
+      
       const token = jwt.sign({ id: user._id }, process.env.JWT_SECRET, {
         expiresIn: '1h',
       });
@@ -91,6 +98,20 @@ exports.loginUser = [
     }
   })
 ];
+
+// Verify email
+exports.verifyEmail = asyncHandler(async (req, res) => {
+  const user = await User.findOne({ verificationToken: req.params.token });
+  if (!user) {
+    return res.status(400).json({ message: 'Invalid verification token' });
+  }
+
+  user.isVerified = true;
+  user.verificationToken = undefined;
+  await user.save();
+
+  res.json({ message: 'Email verified successfully. You can now log in.' });
+});
 
 // User logout
 exports.logoutUser = asyncHandler(async (req, res) => {
