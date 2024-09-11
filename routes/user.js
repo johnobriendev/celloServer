@@ -9,5 +9,6 @@ router.post('/login', userController.loginUser);
 router.post('/logout', userController.logoutUser);
 
 router.get('/', authenticateJWT, userController.getUserData);
+router.get('/verify/:token', userController.verifyEmail);
 
 module.exports = router;
