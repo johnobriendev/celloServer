@@ -1,3 +1,21 @@
+// const mongoose = require('mongoose');
+// const crypto = require('crypto');
+
+// const userSchema = new mongoose.Schema({
+//   name: String,
+//   email: { type: String, unique: true, required: true },
+//   password: { type: String, required: true },
+//   active: { type: Boolean, default: false },
+//   verificationToken: String,
+// });
+
+// userSchema.methods.generateVerificationToken = function() {
+//   this.verificationToken = crypto.randomBytes(64).toString('hex');
+//   return this.verificationToken;
+// };
+
+// module.exports = mongoose.model('User', userSchema);
+
 const mongoose = require('mongoose');
 const bcrypt = require('bcryptjs');
 

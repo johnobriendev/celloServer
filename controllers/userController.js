@@ -53,7 +53,7 @@ exports.registerUser =[
       name,
       email,
       password: await bcrypt.hash(password, 10),
-      isVerified: false,
+      active: false,
     });
 
     await sendVerificationEmail(user);
@@ -62,6 +62,7 @@ exports.registerUser =[
       _id: user._id,
       name: user.name,
       email: user.email,
+      message: 'Registration successful. Please check your email to verify your account.',
     });
   })
 ];
@@ -83,7 +84,7 @@ exports.loginUser = [
 
     const user = await User.findOne({ email });
     if (user && (await bcrypt.compare(password, user.password))) {
-      if (!user.isVerified) {
+      if (!user.active) {
         return res.status(401).json({ message: 'Please verify your email before logging in.' });
       }
       
@@ -106,7 +107,7 @@ exports.verifyEmail = asyncHandler(async (req, res) => {
     return res.status(400).json({ message: 'Invalid verification token' });
   }
 
-  user.isVerified = true;
+  user.active = true;
   user.verificationToken = undefined;
   await user.save();
 
