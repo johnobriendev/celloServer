@@ -3,6 +3,7 @@ const User = require('../models/User');
 const bcrypt = require('bcryptjs');
 const jwt = require('jsonwebtoken');
 const asyncHandler = require('express-async-handler');
+const { sendVerificationEmail } = require('./auth');
 
 // get user data
 exports.getUserData = asyncHandler(async (req, res) => {
